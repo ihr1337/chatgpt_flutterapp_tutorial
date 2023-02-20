@@ -99,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               try {
                                 await ApiService.getModels();
                               } catch (error) {
-                                print('error: $error');
+                                // print('error: $error');
                               }
                             },
                             icon: const Icon(
