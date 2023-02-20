@@ -6,7 +6,7 @@ Color cardColor = const Color(0xFF444654);
 final chatMessages = [
   {
     "msg": "Hello who are you?",
-    "chat Index": 0,
+    "chatIndex": 0,
   },
   {
     "msg":
