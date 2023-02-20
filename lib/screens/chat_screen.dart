@@ -4,6 +4,8 @@ import 'package:chatgpt_flutterapp_tutorial/widgets/chat_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+//
+
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
