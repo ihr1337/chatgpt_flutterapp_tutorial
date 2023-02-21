@@ -1,10 +1,14 @@
+import 'dart:developer';
+
 import 'package:chatgpt_flutterapp_tutorial/constants/constants.dart';
 import 'package:chatgpt_flutterapp_tutorial/services/api_services.dart';
 import 'package:chatgpt_flutterapp_tutorial/services/assets_manager.dart';
 import 'package:chatgpt_flutterapp_tutorial/widgets/chat_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/models_provider.dart';
 import '../services/services.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -33,6 +37,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final modelsProvider = Provider.of<ModelsProvider>(context);
+
     return Scaffold(
         appBar: AppBar(
           elevation: 2,
@@ -97,7 +103,10 @@ class _ChatScreenState extends State<ChatScreen> {
                         IconButton(
                             onPressed: () async {
                               try {
-                                await ApiService.getModels();
+                                log('request has been sent');
+                                await ApiService.sendMessage(
+                                    message: textEditingController.text,
+                                    modelId: modelsProvider.getCurrentModel);
                               } catch (error) {
                                 // print('error: $error');
                               }

@@ -9,6 +9,7 @@ import 'package:chatgpt_flutterapp_tutorial/models/models_model.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
+  //recieve models
   static Future<List<ModelsModel>> getModels() async {
     try {
       var response = await http.get(Uri.parse('$BASE_URL/models'),
@@ -28,6 +29,37 @@ class ApiService {
       }
 
       return ModelsModel.modelsFromSnapshot(temp);
+    } catch (error) {
+      log('error $error');
+      rethrow;
+    }
+  }
+
+  //send message fct
+  static Future<void> sendMessage(
+      {required String message, required String modelId}) async {
+    try {
+      var response = await http.post(Uri.parse('$BASE_URL/completions'),
+          headers: {
+            'Authorization': 'Bearer $API_KEY',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            "model": modelId,
+            "prompt": message,
+            "max_tokens": 100,
+          }));
+
+      Map jsonResponse = jsonDecode(response.body);
+
+      if (jsonResponse['error'] != null) {
+        print('jsonResponse["error"] ${jsonResponse['error']['message']}');
+        throw HttpException(jsonResponse['error']['message']);
+      }
+      // print('json response: $jsonResponse');
+      if (!jsonResponse['choices'].isEmpty) {
+        log('jsonResponse[choices]text ${jsonResponse['choices'][0]['text']}');
+      }
     } catch (error) {
       log('error $error');
       rethrow;
