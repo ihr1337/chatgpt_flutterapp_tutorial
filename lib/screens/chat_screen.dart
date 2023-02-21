@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chatgpt_flutterapp_tutorial/constants/constants.dart';
 import 'package:chatgpt_flutterapp_tutorial/models/chat_model.dart';
 import 'package:chatgpt_flutterapp_tutorial/services/api_services.dart';
@@ -22,17 +20,23 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   bool _isTyping = false;
 
-  late TextEditingController textEditingController;
+  late TextEditingController _textEditingController;
+  late FocusNode _focusNode;
+  late ScrollController _listScrollController;
 
   @override
   void initState() {
-    textEditingController = TextEditingController();
+    _listScrollController = ScrollController();
+    _textEditingController = TextEditingController();
+    _focusNode = FocusNode();
     super.initState();
   }
 
   @override
   void dispose() {
-    textEditingController.dispose();
+    _listScrollController.dispose();
+    _textEditingController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -65,6 +69,7 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               Flexible(
                 child: ListView.builder(
+                    controller: _listScrollController,
                     itemCount: chatList.length,
                     itemBuilder: ((context, index) {
                       return ChatWidget(
@@ -93,8 +98,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     children: [
                       Expanded(
                         child: TextField(
+                          focusNode: _focusNode,
                           style: const TextStyle(color: Colors.white),
-                          controller: textEditingController,
+                          controller: _textEditingController,
                           onSubmitted: (value) async {
                             await sendMessageFCT(
                                 modelsProvider: modelsProvider);
@@ -122,18 +128,30 @@ class _ChatScreenState extends State<ChatScreen> {
         ));
   }
 
+  void scrollListToEnd() {
+    _listScrollController.animateTo(
+      _listScrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 1),
+      curve: Curves.easeOut,
+    );
+  }
+
   Future<void> sendMessageFCT({required ModelsProvider modelsProvider}) async {
     try {
       setState(() {
         _isTyping = true;
+        chatList.add(ChatModel(msg: _textEditingController.text, chatIndex: 0));
+        _textEditingController.clear();
+        _focusNode.unfocus();
       });
-      chatList = await ApiService.sendMessage(
-          message: textEditingController.text,
-          modelId: modelsProvider.getCurrentModel);
+      chatList.addAll(await ApiService.sendMessage(
+          message: _textEditingController.text,
+          modelId: modelsProvider.getCurrentModel));
       setState(() {});
     } catch (error) {
       // print('error: $error');
     } finally {
+      scrollListToEnd();
       setState(() {
         _isTyping = false;
       });

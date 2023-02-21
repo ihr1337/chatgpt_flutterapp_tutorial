@@ -21,14 +21,18 @@ class ChatWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.asset(
-                  chatIndex == 0 ? AssetsManager.userImg : AssetsManager.botImg,
+                  chatIndex == 0
+                      ? AssetsManager.userImg
+                      : AssetsManager.openAiImg,
                   height: 30,
                   width: 30,
                 ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8, right: 8),
-                    child: TextWidget(label: msg),
+                    child: TextWidget(
+                      label: msg,
+                    ),
                   ),
                 ),
                 chatIndex == 0
