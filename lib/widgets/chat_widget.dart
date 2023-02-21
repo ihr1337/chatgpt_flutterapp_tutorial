@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:chatgpt_flutterapp_tutorial/constants/constants.dart';
 import 'package:chatgpt_flutterapp_tutorial/services/assets_manager.dart';
 import 'package:chatgpt_flutterapp_tutorial/widgets/text_widget.dart';
@@ -30,9 +33,21 @@ class ChatWidget extends StatelessWidget {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8, right: 8),
-                    child: TextWidget(
-                      label: msg,
-                    ),
+                    child: chatIndex == 0
+                        ? TextWidget(
+                            label: msg,
+                          )
+                        : DefaultTextStyle(
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 18),
+                            child: AnimatedTextKit(
+                              animatedTexts: [
+                                TyperAnimatedText(
+                                  msg.trim(),
+                                )
+                              ],
+                            ),
+                          ),
                   ),
                 ),
                 chatIndex == 0
