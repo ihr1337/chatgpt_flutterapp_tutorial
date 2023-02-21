@@ -1,4 +1,5 @@
 import 'package:chatgpt_flutterapp_tutorial/constants/constants.dart';
+import 'package:chatgpt_flutterapp_tutorial/providers/chats_provider.dart';
 import 'package:chatgpt_flutterapp_tutorial/providers/models_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,9 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => ModelsProvider(),
-        )
+        ChangeNotifierProvider(create: (_) => ModelsProvider()),
+        ChangeNotifierProvider(create: (_) => ChatsProvider()),
       ],
       child: MaterialApp(
         title: 'ChatGPT FlutterApp',

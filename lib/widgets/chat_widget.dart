@@ -41,6 +41,10 @@ class ChatWidget extends StatelessWidget {
                             style: const TextStyle(
                                 color: Colors.white, fontSize: 18),
                             child: AnimatedTextKit(
+                              isRepeatingAnimation: false,
+                              repeatForever: false,
+                              displayFullTextOnTap: true,
+                              totalRepeatCount: 1,
                               animatedTexts: [
                                 TyperAnimatedText(
                                   msg.trim(),
