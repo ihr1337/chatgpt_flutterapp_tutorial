@@ -7,4 +7,9 @@ class ChatModel {
     required this.msg,
     required this.chatIndex,
   });
+
+  factory ChatModel.fromJson(Map<String, dynamic> json) => ChatModel(
+        msg: json['id'],
+        chatIndex: json['created'],
+      );
 }

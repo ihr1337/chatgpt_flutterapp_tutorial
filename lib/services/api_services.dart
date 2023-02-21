@@ -8,6 +8,8 @@ import 'package:chatgpt_flutterapp_tutorial/constants/api_consts.dart';
 import 'package:chatgpt_flutterapp_tutorial/models/models_model.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/chat_model.dart';
+
 class ApiService {
   //recieve models
   static Future<List<ModelsModel>> getModels() async {
@@ -25,7 +27,7 @@ class ApiService {
       List temp = [];
       for (var value in jsonResponse['data']) {
         temp.add(value);
-        log('temp ${value['id']}');
+        // log('temp ${value['id']}');
       }
 
       return ModelsModel.modelsFromSnapshot(temp);
@@ -36,7 +38,7 @@ class ApiService {
   }
 
   //send message fct
-  static Future<void> sendMessage(
+  static Future<List<ChatModel>> sendMessage(
       {required String message, required String modelId}) async {
     try {
       var response = await http.post(Uri.parse('$BASE_URL/completions'),
@@ -56,10 +58,15 @@ class ApiService {
         print('jsonResponse["error"] ${jsonResponse['error']['message']}');
         throw HttpException(jsonResponse['error']['message']);
       }
-      // print('json response: $jsonResponse');
+
+      List<ChatModel> chatList = [];
       if (!jsonResponse['choices'].isEmpty) {
-        log('jsonResponse[choices]text ${jsonResponse['choices'][0]['text']}');
+        chatList = List.generate(
+            jsonResponse["choices"].length,
+            (index) => ChatModel(
+                msg: jsonResponse["choices"][index]['text'], chatIndex: 1));
       }
+      return chatList;
     } catch (error) {
       log('error $error');
       rethrow;
