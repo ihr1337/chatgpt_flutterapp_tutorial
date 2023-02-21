@@ -4,6 +4,7 @@ import 'package:chatgpt_flutterapp_tutorial/providers/chats_provider.dart';
 import 'package:chatgpt_flutterapp_tutorial/services/api_services.dart';
 import 'package:chatgpt_flutterapp_tutorial/services/assets_manager.dart';
 import 'package:chatgpt_flutterapp_tutorial/widgets/chat_widget.dart';
+import 'package:chatgpt_flutterapp_tutorial/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -143,23 +144,40 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> sendMessageFCT(
       {required ModelsProvider modelsProvider,
       required ChatsProvider chatsProvider}) async {
+    if (_textEditingController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red.shade900,
+          content: const Text('You can\'t send empty messages.')));
+      return;
+    } else if (_isTyping) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red.shade900,
+          content: const Text(
+              'You can\'t send multiple messages at the same time.')));
+      return;
+    }
+    String msg = _textEditingController.text;
     try {
       setState(() {
         _isTyping = true;
-        chatsProvider.addUserMessage(msg: _textEditingController.text);
+        chatsProvider.addUserMessage(msg: msg);
         // chatList.add(ChatModel(msg: _textEditingController.text, chatIndex: 0));
         _textEditingController.clear();
         _focusNode.unfocus();
       });
       await chatsProvider.sendMessageAndGetAnswers(
-          msg: _textEditingController.text,
-          chosenModelId: modelsProvider.getCurrentModel);
+          msg: msg, chosenModelId: modelsProvider.getCurrentModel);
       // chatList.addAll(await ApiService.sendMessage(
       // message: _textEditingController.text,
       // modelId: modelsProvider.getCurrentModel));
       setState(() {});
     } catch (error) {
-      // print('error: $error');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: TextWidget(
+          label: error.toString(),
+        ),
+        backgroundColor: Colors.red.shade900,
+      ));
     } finally {
       scrollListToEnd();
       setState(() {
